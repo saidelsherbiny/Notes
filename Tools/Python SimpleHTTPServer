@@ -1,0 +1,9 @@
+## Simple HTTP Server
+``` shell
+python -m SimpleHTTPServer 9000
+
+#or
+
+python3 -m http.server 9000
+```
+
